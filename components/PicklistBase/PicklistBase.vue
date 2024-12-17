@@ -536,42 +536,49 @@ export default {
       }
     },
     handleSort({ label, sortOrder }) {
-      // Previous state of rows before sorting
-      const oldRowOrder = [...this.sortedRows];
-
-      // Update the sort state
       this.sortColumn = this.columns.find(
         (column) => this.getLabel(column) === label
       );
       this.sortOrder = sortOrder;
 
-      // Perform the sort operation
       const sorted = [...this.sortedRows].sort((a, b) => {
-        if (a[this.sortColumn] < b[this.sortColumn]) {
+        let aVal = a[this.sortColumn];
+        let bVal = b[this.sortColumn];
+
+        if (isNaN(aVal) || isNaN(bVal)) {
+          aVal = aVal.toString().toLowerCase();
+          bVal = bVal.toString().toLowerCase();
+        }
+
+        if (aVal < bVal) {
           return this.sortOrder === 'asc' ? -1 : 1;
-        } else if (a[this.sortColumn] > b[this.sortColumn]) {
+        } else if (aVal > bVal) {
           return this.sortOrder === 'asc' ? 1 : -1;
         } else {
           return 0;
         }
       });
 
-      // Update the sorted rows
-      this.sortedRows = sorted;
-
-      // Map old pickedRows to the new sorted order
-      const newPickedRows = new Array(this.rows.length);
+      const newPickedRows = new Array(this.rows.length).fill(0);
       const newQuantityOptionsMap = new Map();
+
       sorted.forEach((sortedRow, index) => {
-        const originalIndex = oldRowOrder.findIndex((row) => row === sortedRow);
-        newPickedRows[index] = this.pickedRows[originalIndex];
-        newQuantityOptionsMap.set(
-          index,
-          this.quantityOptionsMap.get(originalIndex)
-        );
+        const originalIndex = this.rows.indexOf(sortedRow);
+        if (this.picked.has(originalIndex)) {
+          newPickedRows[index] = this.picked.get(originalIndex).picked;
+        }
+        if (this.quantityAttribute) {
+          newQuantityOptionsMap.set(
+            index,
+            Array.from(
+              { length: sortedRow[this.quantityAttribute] + 1 },
+              (_, i) => i
+            )
+          );
+        }
       });
 
-      // Update pickedRows and quantityOptionsMap to reflect the new order
+      this.sortedRows = sorted;
       this.pickedRows = newPickedRows;
       this.quantityOptionsMap = newQuantityOptionsMap;
     },

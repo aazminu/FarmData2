@@ -61,7 +61,98 @@ describe('Test the PicklistBase component behavior', () => {
     cy.get('[data-cy="picklist-quantity-1"]').should('have.value', '0');
   });
 
-  it('sorts rows correctly and updates picked rows and quantities', () => {
+  it('sorts alphabetical data correctly', () => {
+    cy.mount(PicklistBase, {
+      props: {
+        rows: [
+          { name: 'Item B', quantity: 2, location: 'GHANA' },
+          { name: 'Item A', quantity: 4, location: 'GHANA' },
+          { name: 'Item C', quantity: 6, location: 'GHANA' },
+        ],
+        columns: ['name', 'quantity', 'location'],
+        labels: { name: 'Name', quantity: 'Quantity', location: 'Location' },
+      },
+    });
+
+    cy.get('[data-cy="picklist-sort-button-name"]').click();
+    cy.get('[data-cy="picklist-name-0"]').should('have.text', 'Item A');
+    cy.get('[data-cy="picklist-name-1"]').should('have.text', 'Item B');
+    cy.get('[data-cy="picklist-name-2"]').should('have.text', 'Item C');
+
+    cy.get('[data-cy="picklist-sort-button-name"]').click();
+    cy.get('[data-cy="picklist-name-0"]').should('have.text', 'Item C');
+    cy.get('[data-cy="picklist-name-1"]').should('have.text', 'Item B');
+    cy.get('[data-cy="picklist-name-2"]').should('have.text', 'Item A');
+
+    cy.get('[data-cy="picklist-sort-button-name"]').click();
+    cy.get('[data-cy="picklist-name-0"]').should('have.text', 'Item A');
+    cy.get('[data-cy="picklist-name-1"]').should('have.text', 'Item B');
+    cy.get('[data-cy="picklist-name-2"]').should('have.text', 'Item C');
+  });
+
+  it('sorts numeric data correctly', () => {
+    cy.mount(PicklistBase, {
+      props: {
+        rows: [
+          { name: 'Item B', quantity: 2, location: 'GHANA' },
+          { name: 'Item A', quantity: 10, location: 'GHANA' },
+          { name: 'Item C', quantity: 3, location: 'GHANA' },
+        ],
+        columns: ['name', 'quantity', 'location'],
+        labels: { name: 'Name', quantity: 'Quantity', location: 'Location' },
+      },
+    });
+
+    cy.get('[data-cy="picklist-sort-button-quantity"]').click();
+    cy.get('[data-cy="picklist-quantity-0"]').should('have.text', '2');
+    cy.get('[data-cy="picklist-quantity-1"]').should('have.text', '3');
+    cy.get('[data-cy="picklist-quantity-2"]').should('have.text', '10');
+
+    cy.get('[data-cy="picklist-sort-button-quantity"]').click();
+    cy.get('[data-cy="picklist-quantity-0"]').should('have.text', '10');
+    cy.get('[data-cy="picklist-quantity-1"]').should('have.text', '3');
+    cy.get('[data-cy="picklist-quantity-2"]').should('have.text', '2');
+
+    cy.get('[data-cy="picklist-sort-button-quantity"]').click();
+    cy.get('[data-cy="picklist-quantity-0"]').should('have.text', '2');
+    cy.get('[data-cy="picklist-quantity-1"]').should('have.text', '3');
+    cy.get('[data-cy="picklist-quantity-2"]').should('have.text', '10');
+  });
+
+  it('sorts mixed type data correctly', () => {
+    cy.mount(PicklistBase, {
+      props: {
+        rows: [
+          { name: 'Item B', quantity: 2, location: 'A' },
+          { name: 'Item A', quantity: 10, location: 2 },
+          { name: 'Item C', quantity: 3, location: 'B' },
+          { name: 'Item C', quantity: 3, location: 10 },
+        ],
+        columns: ['name', 'quantity', 'location'],
+        labels: { name: 'Name', quantity: 'Quantity', location: 'Location' },
+      },
+    });
+
+    cy.get('[data-cy="picklist-sort-button-location"]').click();
+    cy.get('[data-cy="picklist-location-0"]').should('have.text', '2');
+    cy.get('[data-cy="picklist-location-1"]').should('have.text', '10');
+    cy.get('[data-cy="picklist-location-2"]').should('have.text', 'A');
+    cy.get('[data-cy="picklist-location-3"]').should('have.text', 'B');
+
+    cy.get('[data-cy="picklist-sort-button-location"]').click();
+    cy.get('[data-cy="picklist-location-0"]').should('have.text', 'B');
+    cy.get('[data-cy="picklist-location-1"]').should('have.text', 'A');
+    cy.get('[data-cy="picklist-location-2"]').should('have.text', '10');
+    cy.get('[data-cy="picklist-location-3"]').should('have.text', '2');
+
+    cy.get('[data-cy="picklist-sort-button-location"]').click();
+    cy.get('[data-cy="picklist-location-0"]').should('have.text', '2');
+    cy.get('[data-cy="picklist-location-1"]').should('have.text', '10');
+    cy.get('[data-cy="picklist-location-2"]').should('have.text', 'A');
+    cy.get('[data-cy="picklist-location-3"]').should('have.text', 'B');
+  });
+
+  it('selected quantities move with sorted data', () => {
     cy.mount(PicklistBase, {
       props: {
         rows: [
@@ -80,20 +171,14 @@ describe('Test the PicklistBase component behavior', () => {
     });
 
     cy.get('[data-cy="picklist-sort-button-name"]').click();
-    cy.get('[data-cy="picklist-row-0"]').contains('Item A');
-    cy.get('[data-cy="picklist-row-1"]').contains('Item B');
     cy.get('[data-cy="picklist-quantity-0"]').should('have.value', '3');
     cy.get('[data-cy="picklist-quantity-1"]').should('have.value', '2');
 
     cy.get('[data-cy="picklist-sort-button-name"]').click();
-    cy.get('[data-cy="picklist-row-0"]').contains('Item B');
-    cy.get('[data-cy="picklist-row-1"]').contains('Item A');
     cy.get('[data-cy="picklist-quantity-0"]').should('have.value', '2');
     cy.get('[data-cy="picklist-quantity-1"]').should('have.value', '3');
 
     cy.get('[data-cy="picklist-sort-button-name"]').click();
-    cy.get('[data-cy="picklist-row-0"]').contains('Item A');
-    cy.get('[data-cy="picklist-row-1"]').contains('Item B');
     cy.get('[data-cy="picklist-quantity-0"]').should('have.value', '3');
     cy.get('[data-cy="picklist-quantity-1"]').should('have.value', '2');
   });
