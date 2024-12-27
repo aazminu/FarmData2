@@ -150,6 +150,36 @@ describe('Test the PickerBase component events', () => {
       });
   });
 
+  it('Emits "update:picked" when the picked prop is changed', () => {
+    const readySpy = cy.spy().as('readySpy');
+    const updatePickedSpy = cy.spy().as('updatePickedSpy');
+
+    cy.mount(PickerBase, {
+      props: {
+        onReady: readySpy,
+        'onUpdate:picked': updatePickedSpy,
+        label: 'Picker',
+        options: ['Option 1', 'Option 2', 'Option 3'],
+        picked: ['Option 1'],
+        required: false,
+        invalidFeedbackText: 'Invalid feedback text.',
+      },
+    }).then(({ wrapper }) => {
+      cy.get('@readySpy')
+        .should('have.been.calledOnce')
+        .then(() => {
+          cy.get('@updatePickedSpy').should('not.have.been.called');
+          wrapper.setProps({ picked: ['Option 2', 'Option 3'] });
+
+          cy.get('@updatePickedSpy').should('have.been.calledOnce');
+          cy.get('@updatePickedSpy').should('have.been.calledWith', [
+            'Option 2',
+            'Option 3',
+          ]);
+        });
+    });
+  });
+
   it('Emits "update:picked" when "All" button is clicked', () => {
     const readySpy = cy.spy().as('readySpy');
     const updateSpy = cy.spy().as('updateSpy');
