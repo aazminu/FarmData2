@@ -25,7 +25,8 @@
                 variant="primary"
                 v-on:click="handleAllButton()"
               >
-                All
+                <span v-if="allPicked">🚫 All</span>
+                <span v-else>✅ All</span>
               </BButton>
               <BButton
                 id="picklist-units-button"
@@ -36,7 +37,8 @@
                 variant="primary"
                 v-on:click="handleUnitsButton()"
               >
-                {{ units }}
+                <span v-if="allPicked">🚫 {{ units }}</span>
+                <span v-else>✅ {{ units }}</span>
               </BButton>
             </BTh>
             <BTh
@@ -704,12 +706,11 @@ export default {
   margin-top: -3px;
 }
 
-#picklist-units-button,
-#picklist-all-button {
-  margin-top: 0px;
-  margin-bottom: 0px;
-  padding-top: 0px;
-  padding-bottom: 0px;
+#picklist-all-button,
+#picklist-units-button {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
 }
 
 #picklist-info-card {

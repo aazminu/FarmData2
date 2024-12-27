@@ -23,15 +23,17 @@
               >*</sup
             >
           </div>
-          <BButton
-            v-if="showAllButton"
-            id="picker-all-button"
-            data-cy="picker-all-button"
-            size="sm"
-            variant="primary"
-            v-on:click="pickAll()"
-            >All</BButton
+         <BButton
+           v-if="showAllButton"
+           id="picker-all-button"
+           data-cy="picker-all-button"
+           size="sm"
+           variant="primary"
+           v-on:click="pickAll"
           >
+           <span v-if="checked.length === options.length">🚫 All</span>
+           <span v-else>✅ All</span>
+         </BButton>
         </div>
       </template>
 
