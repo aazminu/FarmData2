@@ -8,15 +8,17 @@ If you are already familiar with Codespaces, running the FarmData2 Development E
 
 ## Install Help
 
-If you run into problems during the install visit the dedicated [install stream](https://farmdata2.zulipchat.com/#narrow/stream/270906-install) on the [FarmData2 Zulip chat](https://farmdata2.zulipchat.com). Use the search feature to see of others have had and solved the problem you are experiencing. If you do not find a solution, post a summary of your problem and the community will help.
+If you run into problems during the install visit the dedicated [install channel](https://farmdata2.zulipchat.com/#narrow/stream/270906-install) on the [FarmData2 Zulip chat](https://farmdata2.zulipchat.com). Use the search feature to see of others have had and solved the problem you are experiencing. If you do not find a solution, post a summary of your problem and the community will help.
 
 ## Creating a FarmData2 Development Environment in Codespaces
 
-Creating a new FarmData2 Development Environment in Codespaces will take about 10 minutes. [Restarting a development environment](#restarting-a-farmdata2-development-environment-in-codespaces) is much faster.
+Creating a new FarmData2 Development Environment in Codespaces will take about 10 minutes. When you restart an existing development environment it will be much faster.
 
 Use the following steps to create a new FarmData2 Development Environment in Codespaces:
 
 1. Log in to GitHub.
+
+1. [Create a (classic) Personal Access Token (PAT)] in GitHub with the `repo`, `workflow`, `read:org` and `codespace` scopes selected. Choose an expiration date that is appropraite for the work you plan to do. __Be sure to copy and paste your token somewhere safe.__ You'll need it later and you cannot retrieve again after you leave the creation page.
 
 1. Visit the [Codespace settings page](https://github.com/settings/codespaces). Scroll down and adjust the "Default Idle Timeout" setting. This is the amount of time the codespace will continue running if you are not interacting with the development environment. 15 minutes is a good balance that ensures the development environment is not shutdown too soon, but also does not waste your free usage.
 
@@ -37,7 +39,7 @@ Use the following steps to create a new FarmData2 Development Environment in Cod
 1. Connect to the FarmData2 Development Environment in one of the following ways:
 
    1. **Open in your Browser:** This is the fastest and easiest way to connect, but has the limitation that you will not be able to copy and paste information directly between the FarmData2 Development Environment and your local machine.
-      - Click the link provided under the "Open in your Browser" heading.
+      - Click the link provided on the "The FarmData2 Development Environment" page in your browser under the "Open in your Browser" heading.
       - The FarmData2 Development Environment will open in a new browser tab.
    2. **Open on your Machine with VNC:** If you will want to copy and paste information between the FarmData2 Development Environment and your local machine frequently, this is the best way to connect.
       - Confirm that the following dependencies are installed on your machine:
@@ -46,7 +48,7 @@ Use the following steps to create a new FarmData2 Development Environment in Cod
           - For Windows, download and run the `vncviewer64.1.13.0.exe` file.
           - For Mac, download and open the `TigerVNC.1.13.0.dmg` file and then copy the "TigerVNC Viewer" to your Applications folder.
           - Note: Newer versions of the Tiger VNC Viewer might work, but have not been tested.
-      - Follow the directions provided under the "Open on your Machine with VNC" heading.
+      - Follow the directions provided on the "The FarmData2 Development Environment" page in your browser under the "Open on your Machine with VNC" heading.
 
 1. Follow the directions to [Setup the FarmData2 Development Environment](setup.md).
 
