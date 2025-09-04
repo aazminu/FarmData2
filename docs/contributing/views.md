@@ -17,7 +17,8 @@ The purpose of this document is to describe how to create custom API endpoints i
     - Use a path of `/api/fd2_[endpoint]`
 - Configure the View
 
-  - Format: JSON
+  - Format: Serializer
+    - Settings: JSON
   - Show: Fields
 
 - Use `farmos/api/fd2_[endpoint]` to test the new endpoint.
@@ -26,7 +27,8 @@ The purpose of this document is to describe how to create custom API endpoints i
 
 ### Installing the View
 
-- Export the view in farmOS.
+- Export the view in farmOS
+  - Administration -> Configuration -> Development -> Configuration synchronization
 - Copy into a `.yml` file in `farm_fd2/module/config/optional`
 - Remove the `uuid` line
 - `npm run build:fd2`
