@@ -79,7 +79,7 @@ export async function getPlantAsset(plantAssetId) {
 }
 
 /**
- * Get plant assets by location, beds and whether they
+ * Get plant assets by crop, location, beds and whether they
  * are in trays or in the ground.
  *
  * This function returns an array of objects with the following content:
@@ -91,11 +91,15 @@ export async function getPlantAsset(plantAssetId) {
  *  timestamp: <date of event (log) that created the plant asset>,
  *  location: <location of the plant asset>,
  *  beds: <array of bed name(s) (within location) where plant asset is located>,
+ *  inventory: <the number of units in inventory>.
+ *  units: <the name of the units for the inventory as a string>.
+ *  measure: <the measure of the unit as a string>.
  * }
  * ```
  *
- * @param {string} locationName the location of the plant assets.
+ * @param {string} [locationName=null] the location of the plant assets.
  * @param {string[]} [checkedBeds=[]] the beds of the plant assets.
+ * @param {string} [cropName=null] the name of the crop for the plant assets.
  * @param {boolean} [isInGround=true] include plants that are in the ground (direct seeded or transplanted).
  * @param {boolean} [isInTrays=true] include plants that are in trays (tray seeded but not transplanted).
  * @return {Object[]} array of objects with information about the matching plant assets.
@@ -104,8 +108,9 @@ export async function getPlantAsset(plantAssetId) {
  * @category Plant
  */
 export async function getPlantAssets(
-  locationName,
+  locationName = null,
   checkedBeds = [],
+  cropName = null,
   isInTrays = true,
   isInGround = true
 ) {
@@ -114,10 +119,24 @@ export async function getPlantAssets(
   }
 
   const farm = await getFarmOSInstance();
+  let paramStr = '';
 
-  let paramStr = '?location=' + locationName;
+  if (locationName) {
+    paramStr = 'location=' + locationName;
+  }
+
   if (checkedBeds.length > 0) {
-    paramStr = paramStr + '&beds=' + checkedBeds.join(',');
+    if (paramStr.length > 0) {
+      paramStr = paramStr + '&';
+    }
+    paramStr = paramStr + 'beds=' + checkedBeds.join(',');
+  }
+
+  if (cropName) {
+    if (paramStr.length > 0) {
+      paramStr = paramStr + '&';
+    }
+    paramStr = paramStr + 'crop=' + cropName;
   }
 
   let logCategories = [];
@@ -130,11 +149,18 @@ export async function getPlantAssets(
     logCategories.push('transplanting');
   }
   if (logCategories.length > 0) {
-    paramStr = paramStr + '&log-categories=' + logCategories.join(',');
+    if (paramStr.length > 0) {
+      paramStr = paramStr + '&';
+    }
+    paramStr = paramStr + 'log-categories=' + logCategories.join(',');
   }
 
-  const url = '/api/fd2_plant_assets' + paramStr;
-  const results = await farm.remote.request(url); // If no matches, then data will be an array in the response.
+  let url = '/api/fd2_plant_assets';
+  if (paramStr.length > 0) {
+    url = url + '?' + paramStr;
+  }
+
+  const results = await farm.remote.request(url);
 
   if (Array.isArray(results.data)) {
     for (const result of results.data) {
@@ -144,6 +170,12 @@ export async function getPlantAssets(
         result.beds = [];
       } else {
         result.beds = result.beds.split(',');
+      }
+      if (result.inventory) {
+        const inventorySplit = result.inventory.split(' ');
+        result.inventory = parseInt(inventorySplit[0]);
+        result.units = inventorySplit[1];
+        result.measure = inventorySplit[2].slice(1, -1);
       }
     }
     return results.data;

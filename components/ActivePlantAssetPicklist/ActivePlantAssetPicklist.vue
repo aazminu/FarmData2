@@ -230,6 +230,7 @@ export default {
           const results = await farmosUtil.getPlantAssets(
             this.location,
             [],
+            null,
             this.isInTrays,
             this.isInGround
           );

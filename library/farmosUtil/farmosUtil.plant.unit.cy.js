@@ -191,12 +191,8 @@ describe('Test the plant asset functions', () => {
     });
   });
 
-  // it('Check crops are split into array', () => {
-  // Currently sample DB has no cover crops.
-  // });
-
   it('Check beds are split into array', () => {
-    cy.wrap(farmosUtil.getPlantAssets('ALF', [], false, true)).then(
+    cy.wrap(farmosUtil.getPlantAssets('ALF', [], null, false, true)).then(
       (plantAssets) => {
         expect(plantAssets).to.have.length(2);
         expect(plantAssets[0].beds).to.have.length(1);
@@ -204,6 +200,18 @@ describe('Test the plant asset functions', () => {
         expect(plantAssets[1].beds).to.have.length(2);
         expect(plantAssets[1].beds[0]).to.equal('ALF-1');
         expect(plantAssets[1].beds[1]).to.equal('ALF-2');
+      }
+    );
+  });
+
+  it('Check fetching plants for a specific crop', () => {
+    cy.wrap(farmosUtil.getPlantAssets(null, [], 'RADISH')).then(
+      (plantAssets) => {
+        expect(plantAssets).to.have.length(6);
+
+        plantAssets.forEach((plantAsset) => {
+          expect(plantAsset.crop[0]).to.equal('RADISH');
+        });
       }
     );
   });
@@ -220,6 +228,16 @@ describe('Test the plant asset functions', () => {
         });
       });
     });
+  });
+
+  it('Check that inventory is processed', () => {
+    cy.wrap(farmosUtil.getPlantAssets(null, [], 'RADISH')).then(
+      (plantAssets) => {
+        expect(plantAssets[0].inventory).to.equal(105);
+        expect(plantAssets[0].units).to.equal('FEET');
+        expect(plantAssets[0].measure).to.equal('Length/depth');
+      }
+    );
   });
 
   it('Get plant assets for a specific field and bed', () => {
@@ -240,7 +258,7 @@ describe('Test the plant asset functions', () => {
   });
 
   it('Get plant assets in trays only', () => {
-    cy.wrap(farmosUtil.getPlantAssets('CHUAU', [], true, false)).then(
+    cy.wrap(farmosUtil.getPlantAssets('CHUAU', [], null, true, false)).then(
       (plantAssets) => {
         expect(plantAssets).to.have.length(12);
         plantAssets.forEach((plantAsset) => {
@@ -256,7 +274,7 @@ describe('Test the plant asset functions', () => {
   });
 
   it('Get plant assets in ground only', () => {
-    cy.wrap(farmosUtil.getPlantAssets('CHUAU', [], false, true)).then(
+    cy.wrap(farmosUtil.getPlantAssets('CHUAU', [], null, false, true)).then(
       (plantAssets) => {
         expect(plantAssets).to.have.length(6);
         plantAssets.forEach((plantAsset) => {
@@ -274,11 +292,11 @@ describe('Test the plant asset functions', () => {
   it('Get plant assets with both inTrays and inGround set to false', () => {
     const locationName = 'CHUAU';
 
-    cy.wrap(farmosUtil.getPlantAssets(locationName, [], false, false)).then(
-      (plantAssetIds) => {
-        expect(plantAssetIds).to.be.an('array').that.is.empty;
-      }
-    );
+    cy.wrap(
+      farmosUtil.getPlantAssets(locationName, [], null, false, false)
+    ).then((plantAssetIds) => {
+      expect(plantAssetIds).to.be.an('array').that.is.empty;
+    });
   });
 
   it('Get plant assets with no matching field asset', () => {
