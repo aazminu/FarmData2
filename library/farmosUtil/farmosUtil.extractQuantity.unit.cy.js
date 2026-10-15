@@ -46,4 +46,17 @@ describe('Test the extractQuantity function', () => {
       )
     ).to.be.null;
   });
+
+  it('Test substring unitName and empty/null inputs', () => {
+    expect(
+      farmosUtil.extractQuantity(
+        'Tray Size ( Ratio ) 72 CELLS/TRAY, Trays ( Count ) 3 TRAY (Increment)',
+        'TRAY'
+      )
+    ).to.equal(3);
+    expect(farmosUtil.extractQuantity('', 'TRAYS')).to.be.null;
+    expect(farmosUtil.extractQuantity(null, 'TRAYS')).to.be.null;
+    expect(farmosUtil.extractQuantity('5 TRAYS (Count)', '')).to.be.null;
+  });
 });
+

@@ -143,8 +143,9 @@ export async function getPlantAssets(
 
   if (Array.isArray(results.data)) {
     for (const result of results.data) {
-      result.crop = result.crop.split(',');
-      result.created_by = result.created_by.split(',');
+      result.crop = result.crop === '' ? [] : result.crop.split(',');
+      result.created_by =
+        result.created_by === '' ? [] : result.created_by.split(',');
       if (result.beds === '') {
         result.beds = [];
       } else {
