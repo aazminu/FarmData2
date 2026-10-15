@@ -22,13 +22,25 @@
  * @category Utilities
  */
 export function extractQuantity(quantityString, unitName) {
-  const unitSplit = quantityString.split(unitName);
-
-  if (unitSplit.length > 1) {
-    const spaceSplit = unitSplit[0].split(' ');
-    const valueStr = spaceSplit[spaceSplit.length - 2];
-    return Number(valueStr);
-  } else {
+  if (
+    typeof quantityString !== 'string' ||
+    typeof unitName !== 'string' ||
+    quantityString.length === 0 ||
+    unitName.length === 0
+  ) {
     return null;
   }
+
+  const escapedUnit = unitName.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+  const pattern = new RegExp(
+    `(?:^|\\s)([+-]?\\d+(?:\\.\\d+)?)\\s+${escapedUnit}(?=\\s|,|$)`
+  );
+  const match = quantityString.match(pattern);
+  if (match) {
+    const num = Number(match[1]);
+    return Number.isNaN(num) ? null : num;
+  }
+
+  return null;
 }
+
