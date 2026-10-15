@@ -22,18 +22,17 @@
  * @category Utilities
  */
 export function extractQuantity(quantityString, unitName) {
-  if (
-    typeof quantityString !== 'string' ||
-    typeof unitName !== 'string' ||
-    quantityString.length === 0 ||
-    unitName.length === 0
-  ) {
+  if (typeof quantityString !== 'string' || typeof unitName !== 'string') {
+    return null;
+  }
+  const trimmedUnit = unitName.trim();
+  if (quantityString.length === 0 || trimmedUnit.length === 0) {
     return null;
   }
 
-  const escapedUnit = unitName.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+  const escapedUnit = trimmedUnit.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
   const pattern = new RegExp(
-    `(?:^|\\s)([+-]?\\d+(?:\\.\\d+)?)\\s+${escapedUnit}(?=\\s|,|$)`
+    `(?:^|[\\s(])([+-]?\\d+(?:\\.\\d+)?)\\s+${escapedUnit}(?=\\s|,|;|\\)|$)`
   );
   const match = quantityString.match(pattern);
   if (match) {

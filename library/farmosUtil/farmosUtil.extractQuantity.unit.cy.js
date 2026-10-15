@@ -47,16 +47,20 @@ describe('Test the extractQuantity function', () => {
     ).to.be.null;
   });
 
-  it('Test substring unitName and empty/null inputs', () => {
+  it('Test substring unitName, parenthesized/semicolon delimiters, and empty/null inputs', () => {
     expect(
       farmosUtil.extractQuantity(
         'Tray Size ( Ratio ) 72 CELLS/TRAY, Trays ( Count ) 3 TRAY (Increment)',
         'TRAY'
       )
     ).to.equal(3);
+    expect(farmosUtil.extractQuantity('Seeded (25 TRAYS)', 'TRAYS')).to.equal(25);
+    expect(farmosUtil.extractQuantity('5 TRAYS; 10 FEET', 'TRAYS')).to.equal(5);
+    expect(farmosUtil.extractQuantity('5 TRAYS (Count)', ' TRAYS ')).to.equal(5);
     expect(farmosUtil.extractQuantity('', 'TRAYS')).to.be.null;
     expect(farmosUtil.extractQuantity(null, 'TRAYS')).to.be.null;
     expect(farmosUtil.extractQuantity('5 TRAYS (Count)', '')).to.be.null;
   });
 });
+
 
