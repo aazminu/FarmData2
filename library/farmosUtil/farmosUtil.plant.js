@@ -142,15 +142,16 @@ export async function getPlantAssets(
   const results = await farm.remote.request(url); // If no matches, then data will be an array in the response.
 
   if (Array.isArray(results.data)) {
+    const toList = (val) =>
+      Array.isArray(val)
+        ? val
+        : typeof val === 'string' && val.length > 0
+          ? val.split(',')
+          : [];
     for (const result of results.data) {
-      result.crop = result.crop === '' ? [] : result.crop.split(',');
-      result.created_by =
-        result.created_by === '' ? [] : result.created_by.split(',');
-      if (result.beds === '') {
-        result.beds = [];
-      } else {
-        result.beds = result.beds.split(',');
-      }
+      result.crop = toList(result.crop);
+      result.created_by = toList(result.created_by);
+      result.beds = toList(result.beds);
     }
     return results.data;
   } else {
